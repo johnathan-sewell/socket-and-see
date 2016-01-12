@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            border:1px solid #666;
+            /*width: 600px;
+            height: 600px;*/
+        }
+    </style>
+  </head>
+  <body>
+
+<canvas id="UserDrawingView" height="300" width="800"></canvas>
+<canvas id="SocketDrawingView" height="300" width="800" style="position:relative;top:-5px;"></canvas>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+    /*eslint-env jquery*/
+    /*global io*/
+
+    'use strict';
+
+    function redraw(cx, mousePoints) {
+        cx.clearRect(0, 0, cx.canvas.width, cx.canvas.height);
+        cx.beginPath();
+
+        mousePoints.forEach(point => {
+            cx.lineTo(point.x, point.y);
+        });
+        cx.stroke();
+    };
+
+    const UserDrawingView = function() {
+        this.mousePoints = [];
+
+        this.init = function(elementSelector) {
+
+            const canvas = document.querySelector(elementSelector);
+            const cx = canvas.getContext('2d');
+            const socket = io();
+
+            canvas.addEventListener('mousemove', ev => {
+                const x = ev.pageX;
+                const y = ev.pageY;
+
+                this.mousePoints.push({x, y});
+                redraw(cx, this.mousePoints);
+
+                socket.emit('broadcastMousePoint', {x, y});
+            });
+        };
+    };
+
+    const SocketDrawingView = function() {
+        this.mousePoints = [];
+
+        this.init = function(elementSelector) {
+
+            const canvas = document.querySelector(elementSelector);
+            const cx = canvas.getContext('2d');
+            const socket = io();
+
+            socket.on('drawMousePoint', point => {
+                this.mousePoints.push(point);
+                redraw(cx, this.mousePoints);
+            });
+        };
+    };
+
+    const userDrawingView = new UserDrawingView();
+    userDrawingView.init('#UserDrawingView');
+
+    const socketDrawingView = new SocketDrawingView();
+    socketDrawingView.init('#SocketDrawingView');
+</script>
+
+  </body>
+</html>
