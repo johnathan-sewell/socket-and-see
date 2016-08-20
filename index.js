@@ -9,6 +9,7 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
+const appPort = process.env.PORT || 3000;
 
 io.on('connection', function(socket) {
     console.log('a user connected on socket', socket.id);
@@ -33,6 +34,6 @@ app.use(function(req, res) {
     res.status(404).send('That\'s a 404.');
 });
 
-server.listen(3000, () => {
-    console.log(`listening on 3000`);
+server.listen(appPort, () => {
+    console.log(`listening on`, appPort);
 });
