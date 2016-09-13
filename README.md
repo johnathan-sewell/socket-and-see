@@ -4,8 +4,8 @@ Playing around with WebSockets and RxJS - send mouse position data via socket to
 
 ## Running in Development
 
-* Start the node server with `npm start`
-* Transpile and pack the the frontend JavaScript `npm run webpack`
+* Start the node server with `npm run backend`
+* Transpile and pack the the frontend JavaScript `npm run frontend`
 
 ## Deploying
 
