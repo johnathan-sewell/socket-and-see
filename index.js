@@ -14,11 +14,11 @@ const appPort = process.env.PORT || 3000;
 io.on('connection', function(socket) {
     console.log('a user connected on socket', socket.id);
 
-    socket.on('broadcastMousePoint', (data) => {
+    socket.on('mouseData', (data) => {
         console.log(data);
-        socket.broadcast.emit('drawMousePoint', {
+        io.sockets.emit('mouseTranslation', {
             x: data.x,
-            y: (300 - data.y)
+            y: data.y
         });
     });
 });
